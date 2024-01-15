@@ -119,11 +119,11 @@ local OBJDEF = {
 --            :
 --
 --          for i, photo in ipairs(photosToProcess) do
---               :             
---               :             
+--               :
+--               :
 --               local data = JSON:decode(someJsonText, { photo = photo })
---               :             
---               :             
+--               :
+--               :
 --          end
 --
 --
@@ -202,12 +202,12 @@ local OBJDEF = {
 --           indent         = "   ",  -- use this indent for each level of an array/object
 --           align_keys     = false,  -- if true, align the keys in a way that sounds like it should be nice, but is actually ugly
 --           array_newline  = false,  -- if true, array elements become one to a line rather than inline
---           
+--
 --           -- other output-related options
 --           null           = "\0",   -- see "ENCODING JSON NULL VALUES" below
 --           stringsAreUtf8 = false,  -- see "HANDLING UNICODE LINE AND PARAGRAPH SEPARATORS FOR JAVA" below
 --       }
---  
+--
 --       json_string = JSON:encode(mytable, etc, encode_options)
 --
 --
@@ -286,9 +286,9 @@ local OBJDEF = {
 --   An example of setting align_keys to true:
 --
 --     JSON:encode_pretty(data, nil, { pretty = true, indent = "  ", align_keys = true })
---  
+--
 --   produces:
---   
+--
 --      {
 --           "city": "Kyoto",
 --        "climate": {
@@ -322,7 +322,7 @@ local OBJDEF = {
 --   when non-positive numeric keys exist), numeric keys are converted to
 --   strings.
 --
---   For example, 
+--   For example,
 --     JSON:encode({ "one", "two", "three", SOMESTRING = "some string" }))
 --   produces the JSON object
 --     {"1":"one","2":"two","3":"three","SOMESTRING":"some string"}
@@ -346,7 +346,7 @@ local OBJDEF = {
 --      {"username":"admin", "password":null}
 --
 
---   one can include a string value for a "null" field in the options table passed to encode().... 
+--   one can include a string value for a "null" field in the options table passed to encode()....
 --   any Lua table entry with that value becomes null in the JSON output:
 --
 --      JSON:encode({ username = "admin", password = "xyzzy" }, -- First arg is the Lua table to encode as JSON.
@@ -383,15 +383,15 @@ local OBJDEF = {
 --
 --   Without special handling, numbers in JSON can lose precision in Lua.
 --   For example:
---   
+--
 --      T = JSON:decode('{  "small":12345, "big":12345678901234567890123456789, "precise":9876.67890123456789012345  }')
 --
 --      print("small:   ",  type(T.small),    T.small)
 --      print("big:     ",  type(T.big),      T.big)
 --      print("precise: ",  type(T.precise),  T.precise)
---   
+--
 --   produces
---   
+--
 --      small:          number  12345
 --      big:            number  1.2345678901235e+28
 --      precise:        number  9876.6789012346
@@ -401,9 +401,9 @@ local OBJDEF = {
 --   This package offers ways to try to handle this better (for some definitions of "better")...
 --
 --   The most precise method is by setting the global:
---   
+--
 --      JSON.decodeNumbersAsObjects = true
---   
+--
 --   When this is set, numeric JSON data is encoded into Lua in a form that preserves the exact
 --   JSON numeric presentation when re-encoded back out to JSON, or accessed in Lua as a string.
 --
@@ -414,19 +414,19 @@ local OBJDEF = {
 --   Consider the example above, with this option turned on:
 --
 --      JSON.decodeNumbersAsObjects = true
---      
+--
 --      T = JSON:decode('{  "small":12345, "big":12345678901234567890123456789, "precise":9876.67890123456789012345  }')
 --
 --      print("small:   ",  type(T.small),    T.small)
 --      print("big:     ",  type(T.big),      T.big)
 --      print("precise: ",  type(T.precise),  T.precise)
---   
+--
 --   This now produces:
---   
+--
 --      small:          table   12345
 --      big:            table   12345678901234567890123456789
 --      precise:        table   9876.67890123456789012345
---   
+--
 --   However, within Lua you can still use the values (e.g. T.precise in the example above) in numeric
 --   contexts. In such cases you'll get the possibly-imprecise numeric version, but in string contexts
 --   and when the data finds its way to this package's encode() function, the original full-precision
@@ -466,7 +466,7 @@ local OBJDEF = {
 --
 --   This produces:
 --
---      { 
+--      {
 --         "precise": 123456789123456789.123456789123456789,
 --         "imprecise": 1.2345678912346e+17
 --      }
@@ -478,7 +478,7 @@ local OBJDEF = {
 --   string representation of the number instead of the number itself. This approach might be useful
 --   when the numbers are merely some kind of opaque object identifier and you want to work with them
 --   in Lua as strings anyway.
---   
+--
 --   This approach is enabled by setting
 --
 --      JSON.decodeIntegerStringificationLength = 10
@@ -489,7 +489,7 @@ local OBJDEF = {
 --   Consider our previous example with this option set to 10:
 --
 --      JSON.decodeIntegerStringificationLength = 10
---      
+--
 --      T = JSON:decode('{  "small":12345, "big":12345678901234567890123456789, "precise":9876.67890123456789012345  }')
 --
 --      print("small:   ",  type(T.small),    T.small)
@@ -532,7 +532,7 @@ local OBJDEF = {
 --      JSON.decodeDecimalStringificationLength =  5
 --
 --      T = JSON:decode('{  "small":12345, "big":12345678901234567890123456789, "precise":9876.67890123456789012345  }')
---      
+--
 --      print("small:   ",  type(T.small),    T.small)
 --      print("big:     ",  type(T.big),      T.big)
 --      print("precise: ",  type(T.precise),  T.precise)
@@ -550,7 +550,7 @@ local OBJDEF = {
 --   that this package hasn't accounted for: a function, userdata, or a thread. You can handle these types as table
 --   values (but not as table keys) if you supply a JSON:unsupportedTypeEncoder() method along the lines of the
 --   following example:
---        
+--
 --        function JSON:unsupportedTypeEncoder(value_of_unsupported_type)
 --           if type(value_of_unsupported_type) == 'function' then
 --              return "a function value"
@@ -558,7 +558,7 @@ local OBJDEF = {
 --              return nil
 --           end
 --        end
---        
+--
 --   Your unsupportedTypeEncoder() method is actually called with a bunch of arguments:
 --
 --      self:unsupportedTypeEncoder(value, parents, etc, options, indent, for_key)
@@ -715,7 +715,7 @@ local function unicode_codepoint_as_utf8(codepoint)
       local highpart = math.floor(codepoint / 0x40)
       local lowpart  = codepoint - (0x40 * highpart)
       return string.char(0xC0 + highpart,
-                         0x80 + lowpart)
+         0x80 + lowpart)
 
    elseif codepoint <= 65535 then
       --
@@ -735,15 +735,15 @@ local function unicode_codepoint_as_utf8(codepoint)
       -- See table 3.7, page 93, in http://www.unicode.org/versions/Unicode5.2.0/ch03.pdf#G28070
       --
       if ( highpart == 0xE0 and midpart < 0xA0 ) or
-         ( highpart == 0xED and midpart > 0x9F ) or
-         ( highpart == 0xF0 and midpart < 0x90 ) or
-         ( highpart == 0xF4 and midpart > 0x8F )
+          ( highpart == 0xED and midpart > 0x9F ) or
+          ( highpart == 0xF0 and midpart < 0x90 ) or
+          ( highpart == 0xF4 and midpart > 0x8F )
       then
          return "?"
       else
          return string.char(highpart,
-                            midpart,
-                            lowpart)
+            midpart,
+            lowpart)
       end
 
    else
@@ -758,9 +758,9 @@ local function unicode_codepoint_as_utf8(codepoint)
       local lowpart   = remainder - 0x40 * midB
 
       return string.char(0xF0 + highpart,
-                         0x80 + midA,
-                         0x80 + midB,
-                         0x80 + lowpart)
+         0x80 + midA,
+         0x80 + midB,
+         0x80 + lowpart)
    end
 end
 
@@ -808,7 +808,7 @@ local function grok_number(self, text, start, options)
    -- Grab the integer part
    --
    local integer_part = text:match('^-?[1-9]%d*', start)
-                     or text:match("^-?0",        start)
+       or text:match("^-?0",        start)
 
    if not integer_part then
       self:onDecodeError("expected number", text, start, options.etc)
@@ -842,13 +842,13 @@ local function grok_number(self, text, start, options)
          objectify = true
 
       elseif (options.decodeIntegerObjectificationLength
-          and
-         (integer_part:len() >= options.decodeIntegerObjectificationLength or exponent_part:len() > 0))
+             and
+             (integer_part:len() >= options.decodeIntegerObjectificationLength or exponent_part:len() > 0))
 
           or
-         (options.decodeDecimalObjectificationLength 
-          and
-          (decimal_part:len() >= options.decodeDecimalObjectificationLength  or exponent_part:len() > 0))
+          (options.decodeDecimalObjectificationLength
+             and
+             (decimal_part:len() >= options.decodeDecimalObjectificationLength  or exponent_part:len() > 0))
       then
          -- have options and they are triggered, so objectify
          objectify = true
@@ -870,14 +870,14 @@ local function grok_number(self, text, start, options)
       -- way or the other to trip stringification, but I'll be lazy about it until someone asks.
       --
       if (options.decodeIntegerStringificationLength
-          and
-         (integer_part:len() >= options.decodeIntegerStringificationLength or exponent_part:len() > 0))
+             and
+             (integer_part:len() >= options.decodeIntegerStringificationLength or exponent_part:len() > 0))
 
           or
 
-         (options.decodeDecimalStringificationLength 
-          and
-          (decimal_part:len() >= options.decodeDecimalStringificationLength or exponent_part:len() > 0))
+          (options.decodeDecimalStringificationLength
+             and
+             (decimal_part:len() >= options.decodeDecimalStringificationLength or exponent_part:len() > 0))
       then
          return full_number_text, i -- this returns the exact string representation seen in the original JSON
       end
@@ -897,7 +897,7 @@ end
 
 
 local function grok_string(self, text, start, options)
-
+   
    if text:sub(start,start) ~= '"' then
       self:onDecodeError("expected string's opening quote", text, start, options.etc)
       return nil, start -- in case the error method doesn't abort, return something sensible
@@ -975,7 +975,7 @@ end
 local grok_one -- assigned later
 
 local function grok_object(self, text, start, options)
-
+   
    if text:sub(start,start) ~= '{' then
       self:onDecodeError("expected '{'", text, start, options.etc)
       return nil, start -- in case the error method doesn't abort, return something sensible
@@ -1240,12 +1240,12 @@ local function backslash_replacement_function(c)
 end
 
 local chars_to_be_escaped_in_JSON_string
-   = '['
-   ..    '"'    -- class sub-pattern to match a double quote
-   ..    '%\\'  -- class sub-pattern to match a backslash
-   ..    '%z'   -- class sub-pattern to match a null
-   ..    '\001' .. '-' .. '\031' -- class sub-pattern to match control characters
-   .. ']'
+= '['
+    ..    '"'    -- class sub-pattern to match a double quote
+    ..    '%\\'  -- class sub-pattern to match a backslash
+    ..    '%z'   -- class sub-pattern to match a null
+    ..    '\001' .. '-' .. '\031' -- class sub-pattern to match control characters
+    .. ']'
 
 
 local LINE_SEPARATOR_as_utf8      = unicode_codepoint_as_utf8(0x2028)
@@ -1265,7 +1265,7 @@ local function json_string_literal(value, options)
 end
 
 local function object_or_array(self, T, etc, allow_array)
-   --
+      --
    -- We need to inspect all the keys... if there are any strings, we'll convert to a JSON
    -- object. If there are only numbers, it's a JSON array.
    --
@@ -1281,15 +1281,15 @@ local function object_or_array(self, T, etc, allow_array)
       if type(key) == 'string' then
          table.insert(string_keys, key)
       elseif type(key) == 'number' then
-        if allow_array then
-             table.insert(number_keys, key)
-             if key <= 0 or key >= math.huge then
-                number_keys_must_be_strings = true
-             elseif not maximum_number_key or key > maximum_number_key then
-                maximum_number_key = key
-             end
+         if allow_array then
+            table.insert(number_keys, key)
+            if key <= 0 or key >= math.huge then
+               number_keys_must_be_strings = true
+            elseif not maximum_number_key or key > maximum_number_key then
+               maximum_number_key = key
+            end
          else
-             table.insert(string_keys, tonumber(key)) -- 所有的数字key转成string，防止json的array出现
+            table.insert(string_keys, tonumber(key)) -- 所有的数字key转成string，防止json的array出现
          end
       elseif type(key) == 'boolean' then
          table.insert(string_keys, tostring(key))
@@ -1300,19 +1300,19 @@ local function object_or_array(self, T, etc, allow_array)
    -- 检查数组table
    local is_array = true
    if #number_keys and maximum_number_key and not(number_keys_must_be_strings) then
-       table.sort(number_keys)
-       local arr_i = 1
-       for _, v in ipairs(number_keys) do
-          if arr_i == v then
-             arr_i = arr_i + 1
-          else
-             is_array = false
-             break
-          end
-       end
-       if is_array then
-          is_array = arr_i == maximum_number_key + 1
-       end
+      table.sort(number_keys)
+      local arr_i = 1
+      for _, v in ipairs(number_keys) do
+         if arr_i == v then
+            arr_i = arr_i + 1
+         else
+            is_array = false
+            break
+         end
+      end
+      if is_array then
+         is_array = arr_i == maximum_number_key + 1
+      end
    end
 
    if #string_keys == 0 and not number_keys_must_be_strings and is_array then
@@ -1339,7 +1339,7 @@ local function object_or_array(self, T, etc, allow_array)
       end
    end
    string_keys = copy_string_keys
-   table.sort(string_keys)
+   table.sort(string_keys, function(a, b) return tostring(a) < tostring(b) end)
 
    local map
    if #number_keys > 0 then
@@ -1376,7 +1376,7 @@ local function object_or_array(self, T, etc, allow_array)
       end
    end
 
-   return string_keys, nil, map
+      return string_keys, nil, map
 end
 
 --
@@ -1513,14 +1513,14 @@ local function encode_value(self, value, parents, etc, options, indent, for_key)
          -- An object
          --
          local TT = map or T
-
-         if options.pretty then
-
+         
+                  if options.pretty then
+            
             local KEYS = { }
             local max_key_length = 0
             for _, key in ipairs(object_keys) do
                local encoded = encode_value(self, tostring(key), parents, etc, options, indent, true)
-               if options.align_keys then
+                              if options.align_keys then
                   max_key_length = math.max(max_key_length, #encoded)
                end
                table.insert(KEYS, encoded)
@@ -1537,7 +1537,7 @@ local function encode_value(self, value, parents, etc, options, indent, for_key)
             result_value = "{\n" .. table.concat(COMBINED_PARTS, ",\n") .. "\n" .. indent .. "}"
 
          else
-
+            
             local PARTS = { }
             for _, key in ipairs(object_keys) do
                local encoded_val = encode_value(self, TT[key],       parents, etc, options, indent)
@@ -1553,9 +1553,9 @@ local function encode_value(self, value, parents, etc, options, indent, for_key)
          --
          if options.allow_array then
             result_value = "[]"
-        else
+         else
             result_value = "{}" -- 空表转换成对象
-        end
+         end
       end
 
       parents[T] = false
@@ -1657,7 +1657,7 @@ return OBJDEF:new()
 --
 
 --   20160916.19   Fixed the isNumber.__index assignment (thanks to Jack Taylor)
---   
+--
 --   20160730.18   Added JSON:forceString() and JSON:forceNumber()
 --
 --   20160728.17   Added concatenation to the metatable for JSON:asNumber()
@@ -1725,7 +1725,7 @@ return OBJDEF:new()
 --
 --                 To maintain the prior throw-an-error semantics, set
 --                      JSON.noKeyConversion = true
---                 
+--
 --   20131004.7    Release under a Creative Commons CC-BY license, which I should have done from day one, sorry.
 --
 --   20130120.6    Comment update: added a link to the specific page on my blog where this code can
