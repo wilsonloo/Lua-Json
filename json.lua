@@ -23,8 +23,8 @@ local AUTHOR_NOTE = "-[ JSON.lua package by Jeffrey Friedl (http://regex.info/bl
 -- included in OBJDEF below mostly to quiet warnings about unused variables.
 --
 local OBJDEF = {
-   VERSION      = VERSION,
-   AUTHOR_NOTE  = AUTHOR_NOTE,
+   VERSION     = VERSION,
+   AUTHOR_NOTE = AUTHOR_NOTE,
 }
 
 
@@ -598,8 +598,10 @@ local OBJDEF = {
 local default_pretty_indent  = "  "
 local default_pretty_options = { pretty = true, indent = default_pretty_indent, align_keys = false, array_newline = false }
 
-local isArray  = { __tostring = function() return "JSON array"         end }  isArray.__index  = isArray
-local isObject = { __tostring = function() return "JSON object"        end }  isObject.__index = isObject
+local isArray                = { __tostring = function() return "JSON array" end }
+isArray.__index              = isArray
+local isObject               = { __tostring = function() return "JSON object" end }
+isObject.__index             = isObject
 
 function OBJDEF:newArray(tbl)
    return setmetatable(tbl or {}, isArray)
@@ -609,32 +611,28 @@ function OBJDEF:newObject(tbl)
    return setmetatable(tbl or {}, isObject)
 end
 
-
-
-
 local function getnum(op)
    return type(op) == 'number' and op or op.N
 end
 
 local isNumber = {
-   __tostring = function(T)  return T.S        end,
+   __tostring = function(T) return T.S end,
    __unm      = function(op) return getnum(op) end,
 
    __concat   = function(op1, op2) return tostring(op1) .. tostring(op2) end,
-   __add      = function(op1, op2) return getnum(op1)   +   getnum(op2)  end,
-   __sub      = function(op1, op2) return getnum(op1)   -   getnum(op2)  end,
-   __mul      = function(op1, op2) return getnum(op1)   *   getnum(op2)  end,
-   __div      = function(op1, op2) return getnum(op1)   /   getnum(op2)  end,
-   __mod      = function(op1, op2) return getnum(op1)   %   getnum(op2)  end,
-   __pow      = function(op1, op2) return getnum(op1)   ^   getnum(op2)  end,
-   __lt       = function(op1, op2) return getnum(op1)   <   getnum(op2)  end,
-   __eq       = function(op1, op2) return getnum(op1)   ==  getnum(op2)  end,
-   __le       = function(op1, op2) return getnum(op1)   <=  getnum(op2)  end,
+   __add      = function(op1, op2) return getnum(op1) + getnum(op2) end,
+   __sub      = function(op1, op2) return getnum(op1) - getnum(op2) end,
+   __mul      = function(op1, op2) return getnum(op1) * getnum(op2) end,
+   __div      = function(op1, op2) return getnum(op1) / getnum(op2) end,
+   __mod      = function(op1, op2) return getnum(op1) % getnum(op2) end,
+   __pow      = function(op1, op2) return getnum(op1) ^ getnum(op2) end,
+   __lt       = function(op1, op2) return getnum(op1) < getnum(op2) end,
+   __eq       = function(op1, op2) return getnum(op1) == getnum(op2) end,
+   __le       = function(op1, op2) return getnum(op1) <= getnum(op2) end,
 }
 isNumber.__index = isNumber
 
 function OBJDEF:asNumber(item)
-
    if getmetatable(item) == isNumber then
       -- it's already a JSON number object.
       return item
@@ -700,14 +698,12 @@ function OBJDEF:isString(item)
    end
 end
 
-
 local function unicode_codepoint_as_utf8(codepoint)
    --
    -- codepoint is a number
    --
    if codepoint <= 127 then
       return string.char(codepoint)
-
    elseif codepoint <= 2047 then
       --
       -- 110yyyxx 10xxxxxx         <-- useful notation from http://en.wikipedia.org/wiki/Utf8
@@ -716,7 +712,6 @@ local function unicode_codepoint_as_utf8(codepoint)
       local lowpart  = codepoint - (0x40 * highpart)
       return string.char(0xC0 + highpart,
          0x80 + lowpart)
-
    elseif codepoint <= 65535 then
       --
       -- 1110yyyy 10yyyyxx 10xxxxxx
@@ -726,18 +721,18 @@ local function unicode_codepoint_as_utf8(codepoint)
       local midpart   = math.floor(remainder / 0x40)
       local lowpart   = remainder - 0x40 * midpart
 
-      highpart = 0xE0 + highpart
-      midpart  = 0x80 + midpart
-      lowpart  = 0x80 + lowpart
+      highpart        = 0xE0 + highpart
+      midpart         = 0x80 + midpart
+      lowpart         = 0x80 + lowpart
 
       --
       -- Check for an invalid character (thanks Andy R. at Adobe).
       -- See table 3.7, page 93, in http://www.unicode.org/versions/Unicode5.2.0/ch03.pdf#G28070
       --
-      if ( highpart == 0xE0 and midpart < 0xA0 ) or
-          ( highpart == 0xED and midpart > 0x9F ) or
-          ( highpart == 0xF0 and midpart < 0x90 ) or
-          ( highpart == 0xF4 and midpart > 0x8F )
+      if (highpart == 0xE0 and midpart < 0xA0) or
+          (highpart == 0xED and midpart > 0x9F) or
+          (highpart == 0xF0 and midpart < 0x90) or
+          (highpart == 0xF4 and midpart > 0x8F)
       then
          return "?"
       else
@@ -745,7 +740,6 @@ local function unicode_codepoint_as_utf8(codepoint)
             midpart,
             lowpart)
       end
-
    else
       --
       -- 11110zzz 10zzyyyy 10yyyyxx 10xxxxxx
@@ -808,7 +802,7 @@ local function grok_number(self, text, start, options)
    -- Grab the integer part
    --
    local integer_part = text:match('^-?[1-9]%d*', start)
-       or text:match("^-?0",        start)
+       or text:match("^-?0", start)
 
    if not integer_part then
       self:onDecodeError("expected number", text, start, options.etc)
@@ -834,13 +828,11 @@ local function grok_number(self, text, start, options)
    local full_number_text = integer_part .. decimal_part .. exponent_part
 
    if options.decodeNumbersAsObjects then
-
       local objectify = false
 
       if not options.decodeIntegerObjectificationLength and not options.decodeDecimalObjectificationLength then
          -- no options, so objectify
          objectify = true
-
       elseif (options.decodeIntegerObjectificationLength
              and
              (integer_part:len() >= options.decodeIntegerObjectificationLength or exponent_part:len() > 0))
@@ -848,7 +840,7 @@ local function grok_number(self, text, start, options)
           or
           (options.decodeDecimalObjectificationLength
              and
-             (decimal_part:len() >= options.decodeDecimalObjectificationLength  or exponent_part:len() > 0))
+             (decimal_part:len() >= options.decodeDecimalObjectificationLength or exponent_part:len() > 0))
       then
          -- have options and they are triggered, so objectify
          objectify = true
@@ -858,9 +850,7 @@ local function grok_number(self, text, start, options)
          return OBJDEF:asNumber(full_number_text), i
       end
       -- else, fall through to try to return as a straight-up number
-
    else
-
       -- Not always decoding numbers as objects, so perhaps encode as strings?
 
       --
@@ -881,7 +871,6 @@ local function grok_number(self, text, start, options)
       then
          return full_number_text, i -- this returns the exact string representation seen in the original JSON
       end
-
    end
 
 
@@ -897,8 +886,7 @@ end
 
 
 local function grok_string(self, text, start, options)
-   
-   if text:sub(start,start) ~= '"' then
+   if text:sub(start, start) ~= '"' then
       self:onDecodeError("expected string's opening quote", text, start, options.etc)
       return nil, start -- in case the error method doesn't abort, return something sensible
    end
@@ -907,7 +895,7 @@ local function grok_string(self, text, start, options)
    local text_len = text:len()
    local VALUE = ""
    while i <= text_len do
-      local c = text:sub(i,i)
+      local c = text:sub(i, i)
       if c == '"' then
          return VALUE, i + 1
       end
@@ -930,7 +918,8 @@ local function grok_string(self, text, start, options)
          VALUE = VALUE .. "\t"
          i = i + 2
       else
-         local hex = text:match('^\\u([0123456789aAbBcCdDeEfF][0123456789aAbBcCdDeEfF][0123456789aAbBcCdDeEfF][0123456789aAbBcCdDeEfF])', i)
+         local hex = text:match(
+            '^\\u([0123456789aAbBcCdDeEfF][0123456789aAbBcCdDeEfF][0123456789aAbBcCdDeEfF][0123456789aAbBcCdDeEfF])', i)
          if hex then
             i = i + 6 -- bypass what we just read
 
@@ -948,9 +937,7 @@ local function grok_string(self, text, start, options)
                end
             end
             VALUE = VALUE .. unicode_codepoint_as_utf8(codepoint)
-
          else
-
             -- just pass through what's escaped
             VALUE = VALUE .. text:match('^\\(.)', i)
             i = i + 2
@@ -963,7 +950,6 @@ local function grok_string(self, text, start, options)
 end
 
 local function skip_whitespace(text, start)
-
    local _, match_end = text:find("^[ \n\r\t]+", start) -- [http://www.ietf.org/rfc/rfc4627.txt] Section 2
    if match_end then
       return match_end + 1
@@ -975,17 +961,16 @@ end
 local grok_one -- assigned later
 
 local function grok_object(self, text, start, options)
-   
-   if text:sub(start,start) ~= '{' then
+   if text:sub(start, start) ~= '{' then
       self:onDecodeError("expected '{'", text, start, options.etc)
       return nil, start -- in case the error method doesn't abort, return something sensible
    end
 
    local i = skip_whitespace(text, start + 1) -- +1 to skip the '{'
 
-   local VALUE = self.strictTypes and self:newObject { } or { }
+   local VALUE = self.strictTypes and self:newObject {} or {}
 
-   if text:sub(i,i) == '}' then
+   if text:sub(i, i) == '}' then
       return VALUE, i + 1
    end
    local text_len = text:len()
@@ -1010,7 +995,7 @@ local function grok_object(self, text, start, options)
       --
       i = skip_whitespace(text, new_i)
 
-      local c = text:sub(i,i)
+      local c = text:sub(i, i)
 
       if c == '}' then
          return VALUE, i + 1
@@ -1029,14 +1014,14 @@ local function grok_object(self, text, start, options)
 end
 
 local function grok_array(self, text, start, options)
-   if text:sub(start,start) ~= '[' then
+   if text:sub(start, start) ~= '[' then
       self:onDecodeError("expected '['", text, start, options.etc)
       return nil, start -- in case the error method doesn't abort, return something sensible
    end
 
    local i = skip_whitespace(text, start + 1) -- +1 to skip the '['
-   local VALUE = self.strictTypes and self:newArray { } or { }
-   if text:sub(i,i) == ']' then
+   local VALUE = self.strictTypes and self:newArray {} or {}
+   if text:sub(i, i) == ']' then
       return VALUE, i + 1
    end
 
@@ -1055,7 +1040,7 @@ local function grok_array(self, text, start, options)
       --
       -- Expect now either ']' to end things, or a ',' to allow us to continue.
       --
-      local c = text:sub(i,i)
+      local c = text:sub(i, i)
       if c == ']' then
          return VALUE, i + 1
       end
@@ -1081,25 +1066,18 @@ grok_one = function(self, text, start, options)
 
    if text:find('^"', start) then
       return grok_string(self, text, start, options.etc)
-
    elseif text:find('^[-0123456789 ]', start) then
       return grok_number(self, text, start, options)
-
    elseif text:find('^%{', start) then
       return grok_object(self, text, start, options)
-
    elseif text:find('^%[', start) then
       return grok_array(self, text, start, options)
-
    elseif text:find('^true', start) then
       return true, start + 4
-
    elseif text:find('^false', start) then
       return false, start + 5
-
    elseif text:find('^null', start) then
       return options.null, start + 4
-
    else
       self:onDecodeError("can't parse JSON", text, start, options.etc)
       return nil, 1 -- in case the error method doesn't abort, return something sensible
@@ -1133,7 +1111,6 @@ function OBJDEF:decode(text, etc, options)
       local error_message = "nil passed to JSON:decode()"
       self:onDecodeOfNilError(error_message, nil, nil, options.etc)
       return nil, error_message -- in case the error method doesn't abort, return something sensible
-
    elseif type(text) ~= 'string' then
       local error_message = "expected string argument to JSON:decode()"
       self:onDecodeError(string.format("%s, got %s", error_message, type(text)), nil, nil, options.etc)
@@ -1157,7 +1134,7 @@ function OBJDEF:decode(text, etc, options)
    -- Those are perfectly valid encodings for JSON (as per RFC 4627 section 3),
    -- but this package can't handle them.
    --
-   if text:sub(1,1):byte() == 0 or (text:len() >= 2 and text:sub(2,2):byte() == 0) then
+   if text:sub(1, 1):byte() == 0 or (text:len() >= 2 and text:sub(2, 2):byte() == 0) then
       local error_message = "JSON package groks only UTF-8, sorry"
       self:onDecodeError(error_message, text, nil, options.etc)
       return nil, error_message -- in case the error method doesn't abort, return something sensible
@@ -1189,7 +1166,6 @@ function OBJDEF:decode(text, etc, options)
    local success, value, next_i = pcall(grok_one, self, text, 1, options)
 
    if success then
-
       local error_message = nil
       if next_i ~= #text + 1 then
          -- something's left over after we parsed the first thing.... whitespace is allowed.
@@ -1201,9 +1177,7 @@ function OBJDEF:decode(text, etc, options)
          end
       end
       return value, error_message
-
    else
-
       -- If JSON:onDecodeError() didn't abort out of the pcall, we'll have received
       -- the error message here as "value", so pass it along as an assert.
       local error_message = value
@@ -1215,7 +1189,6 @@ function OBJDEF:decode(text, etc, options)
       -- ...and if we're still here (because the assert didn't throw an error),
       -- return a nil and throw the error message on as a second arg
       return nil, error_message
-
    end
 end
 
@@ -1241,10 +1214,10 @@ end
 
 local chars_to_be_escaped_in_JSON_string
 = '['
-    ..    '"'    -- class sub-pattern to match a double quote
-    ..    '%\\'  -- class sub-pattern to match a backslash
-    ..    '%z'   -- class sub-pattern to match a null
-    ..    '\001' .. '-' .. '\031' -- class sub-pattern to match control characters
+    .. '"'                     -- class sub-pattern to match a double quote
+    .. '%\\'                   -- class sub-pattern to match a backslash
+    .. '%z'                    -- class sub-pattern to match a null
+    .. '\001' .. '-' .. '\031' -- class sub-pattern to match control characters
     .. ']'
 
 
@@ -1259,21 +1232,21 @@ local function json_string_literal(value, options)
       -- I'd rather decode the byte stream into a character stream, but it's not technically needed so
       -- not technically worth it.
       --
-      newval = newval:gsub(LINE_SEPARATOR_as_utf8, '\\u2028'):gsub(PARAGRAPH_SEPARATOR_as_utf8,'\\u2029')
+      newval = newval:gsub(LINE_SEPARATOR_as_utf8, '\\u2028'):gsub(PARAGRAPH_SEPARATOR_as_utf8, '\\u2029')
    end
    return '"' .. newval .. '"'
 end
 
 local function object_or_array(self, T, etc, allow_array)
-      --
+   --
    -- We need to inspect all the keys... if there are any strings, we'll convert to a JSON
    -- object. If there are only numbers, it's a JSON array.
    --
    -- If we'll be converting to a JSON object, we'll want to sort the keys so that the
    -- end result is deterministic.
    --
-   local string_keys = { }
-   local number_keys = { }
+   local string_keys = {}
+   local number_keys = {}
    local number_keys_must_be_strings = false
    local maximum_number_key
 
@@ -1297,9 +1270,10 @@ local function object_or_array(self, T, etc, allow_array)
          self:onEncodeError("can't encode table with a key of type " .. type(key), etc)
       end
    end
+
    -- 检查数组table
    local is_array = true
-   if #number_keys and maximum_number_key and not(number_keys_must_be_strings) then
+   if #number_keys and maximum_number_key and not (number_keys_must_be_strings) then
       table.sort(number_keys)
       local arr_i = 1
       for _, v in ipairs(number_keys) do
@@ -1324,7 +1298,7 @@ local function object_or_array(self, T, etc, allow_array)
       elseif tostring(T) == "JSON array" then
          return nil
       elseif tostring(T) == "JSON object" then
-         return { }
+         return {}
       else
          -- have to guess, so we'll pick array, since empty arrays are likely more common than empty objects
          return nil
@@ -1355,7 +1329,7 @@ local function object_or_array(self, T, etc, allow_array)
       --
       -- Have to make a shallow copy of the source table so we can remap the numeric keys to be strings
       --
-      map = { }
+      map = {}
       for key, val in pairs(T) do
          map[key] = val
       end
@@ -1368,15 +1342,17 @@ local function object_or_array(self, T, etc, allow_array)
       for _, number_key in ipairs(number_keys) do
          local string_key = tostring(number_key)
          if map[string_key] == nil then
-            table.insert(string_keys , string_key)
+            table.insert(string_keys, string_key)
             map[string_key] = T[number_key]
          else
-            self:onEncodeError("conflict converting table with mixed-type keys into a JSON object: key " .. number_key .. " exists both as a string and a number.", etc)
+            self:onEncodeError(
+               "conflict converting table with mixed-type keys into a JSON object: key " ..
+               number_key .. " exists both as a string and a number.", etc)
          end
       end
    end
 
-      return string_keys, nil, map
+   return string_keys, nil, map
 end
 
 --
@@ -1404,16 +1380,13 @@ end
 --
 --
 local function encode_value(self, value, parents, etc, options, indent, for_key)
-
    --
    -- keys in a JSON object can never be null, so we don't even consider options.null when converting a key value
    --
    if value == nil or (not for_key and options and options.null and value == options.null) then
       return 'null'
-
    elseif type(value) == 'string' then
       return json_string_literal(value, options)
-
    elseif type(value) == 'number' then
       if value ~= value then
          --
@@ -1439,12 +1412,9 @@ local function encode_value(self, value, parents, etc, options, indent, for_key)
       else
          return tostring(value)
       end
-
    elseif type(value) == 'boolean' then
       return tostring(value)
-
    elseif type(value) ~= 'table' then
-
       if self.unsupportedTypeEncoder then
          local user_value, user_error = self:unsupportedTypeEncoder(value, parents, etc, options, indent, for_key)
          -- If the user's handler returns a string, use that. If it returns nil plus an error message, bail with that.
@@ -1459,7 +1429,6 @@ local function encode_value(self, value, parents, etc, options, indent, for_key)
       end
 
       self:onEncodeError("can't convert " .. type(value) .. " to JSON", etc)
-
    elseif getmetatable(value) == isNumber then
       return tostring(value)
    else
@@ -1483,7 +1452,12 @@ local function encode_value(self, value, parents, etc, options, indent, for_key)
 
       local result_value
 
-      local object_keys, maximum_number_key, map = object_or_array(self, T, etc, options.allow_array)
+      local allow_array = options.allow_array
+      if T.__allow_array then
+         allow_array = true
+         T.__allow_array = nil
+      end
+      local object_keys, maximum_number_key, map = object_or_array(self, T, etc, allow_array)
       if maximum_number_key then
          --
          -- An array...
@@ -1495,7 +1469,7 @@ local function encode_value(self, value, parents, etc, options, indent, for_key)
             key_indent = indent
          end
 
-         local ITEMS = { }
+         local ITEMS = {}
          for i = 1, maximum_number_key do
             table.insert(ITEMS, encode_value(self, T[i], parents, etc, options, key_indent))
          end
@@ -1505,22 +1479,20 @@ local function encode_value(self, value, parents, etc, options, indent, for_key)
          elseif options.pretty then
             result_value = "[ " .. table.concat(ITEMS, ", ") .. " ]"
          else
-            result_value = "["  .. table.concat(ITEMS, ",")  .. "]"
+            result_value = "[" .. table.concat(ITEMS, ",") .. "]"
          end
-
       elseif object_keys then
          --
          -- An object
          --
          local TT = map or T
-         
-                  if options.pretty then
-            
-            local KEYS = { }
+
+         if options.pretty then
+            local KEYS = {}
             local max_key_length = 0
             for _, key in ipairs(object_keys) do
                local encoded = encode_value(self, tostring(key), parents, etc, options, indent, true)
-                              if options.align_keys then
+               if options.align_keys then
                   max_key_length = math.max(max_key_length, #encoded)
                end
                table.insert(KEYS, encoded)
@@ -1529,29 +1501,26 @@ local function encode_value(self, value, parents, etc, options, indent, for_key)
             local subtable_indent = key_indent .. string.rep(" ", max_key_length) .. (options.align_keys and "  " or "")
             local FORMAT = "%s%" .. string.format("%d", max_key_length) .. "s: %s"
 
-            local COMBINED_PARTS = { }
+            local COMBINED_PARTS = {}
             for i, key in ipairs(object_keys) do
                local encoded_val = encode_value(self, TT[key], parents, etc, options, subtable_indent)
                table.insert(COMBINED_PARTS, string.format(FORMAT, key_indent, KEYS[i], encoded_val))
             end
             result_value = "{\n" .. table.concat(COMBINED_PARTS, ",\n") .. "\n" .. indent .. "}"
-
          else
-            
-            local PARTS = { }
+            local PARTS = {}
             for _, key in ipairs(object_keys) do
-               local encoded_val = encode_value(self, TT[key],       parents, etc, options, indent)
+               local encoded_val = encode_value(self, TT[key], parents, etc, options, indent)
                local encoded_key = encode_value(self, tostring(key), parents, etc, options, indent, true)
                table.insert(PARTS, string.format("%s:%s", encoded_key, encoded_val))
             end
             result_value = "{" .. table.concat(PARTS, ",") .. "}"
-
          end
       else
          --
          -- An empty array/object... we'll treat it as an array, though it should really be an option
          --
-         if options.allow_array then
+         if allow_array then
             result_value = "[]"
          else
             result_value = "{}" -- 空表转换成对象
@@ -1610,7 +1579,7 @@ end
 OBJDEF.__index = OBJDEF
 
 function OBJDEF:new(args)
-   local new = { }
+   local new = {}
 
    if args then
       for key, val in pairs(args) do
